@@ -156,7 +156,7 @@ package main
 
 import (
     "fmt"
-    "github.com/yourusername/tc66c-toolkit/lib/tc66c"
+    "github.com/skgsergio/tc66c-toolkit/lib/tc66c"
 )
 
 func main() {
