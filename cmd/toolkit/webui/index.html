@@ -13,7 +13,8 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #0f172a;
+            color: #e2e8f0;
             min-height: 100vh;
             padding: 20px;
         }
@@ -25,34 +26,36 @@
 
         header {
             text-align: center;
-            color: white;
+            color: #f8fafc;
             margin-bottom: 30px;
         }
 
         header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            font-weight: 700;
         }
 
         header p {
             font-size: 1.1rem;
-            opacity: 0.9;
+            color: #94a3b8;
         }
 
         .card {
-            background: white;
+            background: #1e293b;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid #334155;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
             padding: 25px;
             margin-bottom: 20px;
         }
 
         .card h2 {
-            color: #667eea;
+            color: #f8fafc;
             margin-bottom: 20px;
             font-size: 1.5rem;
-            border-bottom: 2px solid #f0f0f0;
+            font-weight: 700;
+            border-bottom: 1px solid #334155;
             padding-bottom: 10px;
         }
 
@@ -92,45 +95,54 @@
             margin-bottom: 20px;
         }
 
-        button {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 12px 24px;
+        button, select, input {
+            padding: 10px 12px;
             border-radius: 6px;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            height: 42px;
+            border: 1px solid #475569;
+        }
+
+        button {
+            background: #3b82f6;
+            color: white;
+            padding: 10px 24px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
+            transition: all 0.2s ease;
+            font-weight: 500;
         }
 
         button:hover:not(:disabled) {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-        }
-
-        button:disabled {
-            background: #cbd5e1;
-            cursor: not-allowed;
-            transform: none;
+            background: #2563eb;
         }
 
         button.danger {
-            background: #ef4444;
-        }
-
-        button.danger:hover:not(:disabled) {
             background: #dc2626;
         }
 
-        select {
-            padding: 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 6px;
-            font-size: 1rem;
+        button.danger:hover:not(:disabled) {
+            background: #b91c1c;
+        }
+
+        button:disabled {
+            background: #475569 !important;
+            color: #94a3b8 !important;
+            cursor: not-allowed;
+        }
+
+        select, input {
+            background: #334155;
+            color: #e2e8f0;
             flex: 1;
+        }
+
+        select {
             min-width: 200px;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #3b82f6;
         }
 
         .input-group {
@@ -141,52 +153,48 @@
         }
 
         .input-group label {
-            font-weight: 600;
-            color: #374151;
+            font-weight: 500;
+            color: #cbd5e1;
             min-width: 120px;
-        }
-
-        .input-group input {
-            padding: 10px;
-            border: 2px solid #e5e7eb;
-            border-radius: 6px;
-            font-size: 1rem;
-            flex: 1;
+            text-align: right;
         }
 
 
         .reading-item {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #334155;
             padding: 12px 16px;
             border-radius: 6px;
-            color: white;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            border: 1px solid #475569;
+            color: #e2e8f0;
         }
 
         .reading-label {
             font-size: 0.75rem;
-            opacity: 0.9;
+            color: #94a3b8;
             margin-bottom: 3px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-weight: 500;
         }
 
         .reading-value {
             font-size: 1.4rem;
             font-weight: 700;
             margin-bottom: 2px;
+            color: #f8fafc;
         }
 
         .reading-unit {
             font-size: 0.85rem;
-            opacity: 0.8;
+            color: #cbd5e1;
         }
 
         .log-container {
-            background: #1f2937;
-            color: #f3f4f6;
+            background: #0f172a;
+            color: #e2e8f0;
             padding: 15px;
             border-radius: 8px;
+            border: 1px solid #334155;
             font-family: 'Courier New', monospace;
             font-size: 0.9rem;
             max-height: 300px;
@@ -197,7 +205,7 @@
         .log-entry {
             margin-bottom: 5px;
             padding: 3px 0;
-            border-bottom: 1px solid #374151;
+            border-bottom: 1px solid #1e293b;
         }
 
         .log-entry:last-child {
@@ -205,7 +213,7 @@
         }
 
         .log-timestamp {
-            color: #9ca3af;
+            color: #64748b;
             margin-right: 10px;
         }
 
@@ -220,12 +228,13 @@
         .empty-state {
             text-align: center;
             padding: 40px;
-            color: #9ca3af;
+            color: #64748b;
         }
 
         .empty-state-icon {
             font-size: 3rem;
             margin-bottom: 15px;
+            opacity: 0.5;
         }
 
         @media (max-width: 768px) {
@@ -255,22 +264,24 @@
                     <span class="status-text" id="wsStatusText">Disconnected</span>
                 </div>
             </div>
-            <div class="input-group">
-                <label>Serial Port:</label>
-                <select id="serialPortSelect" disabled>
-                    <option value="">Loading ports...</option>
-                </select>
-                <button id="btnRefreshPorts">Refresh</button>
-            </div>
-            <div class="input-group">
-                <label>Poll Interval:</label>
-                <select id="pollInterval">
-                    <option value="100">100 ms</option>
-                    <option value="250" selected>250 ms</option>
-                    <option value="500">500 ms</option>
-                    <option value="1000">1 s</option>
-                    <option value="2000">2 s</option>
-                </select>
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label>Serial Port:</label>
+                    <select id="serialPortSelect" disabled>
+                        <option value="">Loading ports...</option>
+                    </select>
+                    <button id="btnRefreshPorts">Refresh</button>
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label>Poll Interval:</label>
+                    <select id="pollInterval">
+                        <option value="100">100 ms</option>
+                        <option value="250" selected>250 ms</option>
+                        <option value="500">500 ms</option>
+                        <option value="1000">1 s</option>
+                        <option value="2000">2 s</option>
+                    </select>
+                </div>
             </div>
             <div class="controls">
                 <button id="btnStartPoll" disabled>Start Polling</button>
@@ -305,12 +316,12 @@
                 </div>
             </div>
             <div style="position: relative; height: 400px;">
-                <canvas id="chartCanvas" style="width: 100%; height: 100%; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: crosshair;"></canvas>
-                <div id="chartTooltip" style="position: absolute; background: white; color: #374151; padding: 12px 16px; border-radius: 6px; font-size: 14px; pointer-events: none; display: none; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 2px solid #e5e7eb;"></div>
+                <canvas id="chartCanvas" style="width: 100%; height: 100%; border: 1px solid #475569; border-radius: 8px; background: #0f172a; cursor: crosshair;"></canvas>
+                <div id="chartTooltip" style="position: absolute; background: #1e293b; color: #e2e8f0; padding: 12px 16px; border-radius: 6px; font-size: 14px; pointer-events: none; display: none; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.5); border: 1px solid #475569;"></div>
             </div>
 
-            <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0f0f0;">
-                <h3 style="color: #667eea; margin-bottom: 15px; font-size: 1.2rem;">Current Readings</h3>
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #334155;">
+                <h3 style="color: #f8fafc; margin-bottom: 15px; font-size: 1.2rem; font-weight: 600;">Current Readings</h3>
                 <div id="readingDisplay" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
                     <div class="empty-state">
                         <div class="empty-state-icon">📊</div>
@@ -339,6 +350,7 @@
         let chartData = [];
         const MAX_DATA_POINTS = 1000;
         let chartMetadata = null; // Store chart metadata for tooltips
+        let hoveredDataIndex = -1; // Track hovered data point for vertical line
 
         // DOM elements
         const wsStatus = document.getElementById('wsStatus');
@@ -556,11 +568,15 @@
             const width = rect.width;
             const height = rect.height;
 
+            // Improve text rendering
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+
             // Clear canvas
             ctx.clearRect(0, 0, width, height);
 
             if (chartData.length === 0) {
-                ctx.fillStyle = '#9ca3af';
+                ctx.fillStyle = '#64748b';
                 ctx.font = '16px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.fillText('No data available', width / 2, height / 2);
@@ -603,7 +619,7 @@
             };
 
             // Draw grid
-            ctx.strokeStyle = '#e5e7eb';
+            ctx.strokeStyle = '#334155';
             ctx.lineWidth = 1;
             for (let i = 0; i <= 5; i++) {
                 const y = margin.top + (i / 5) * chartHeight;
@@ -614,7 +630,7 @@
             }
 
             // Draw axes
-            ctx.strokeStyle = '#374151';
+            ctx.strokeStyle = '#64748b';
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(margin.left, margin.top);
@@ -624,8 +640,8 @@
             ctx.stroke();
 
             // Draw left Y-axis labels
-            ctx.fillStyle = '#667eea';
-            ctx.font = '12px sans-serif';
+            ctx.fillStyle = '#60a5fa';
+            ctx.font = '13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
             ctx.textAlign = 'right';
             for (let i = 0; i <= 5; i++) {
                 const value = ((leftRange + leftPadding) * (5 - i) / 5);
@@ -634,7 +650,7 @@
             }
 
             // Draw right Y-axis labels
-            ctx.fillStyle = '#ef4444';
+            ctx.fillStyle = '#fbbf24';
             ctx.textAlign = 'left';
             for (let i = 0; i <= 5; i++) {
                 const value = ((rightRange + rightPadding) * (5 - i) / 5);
@@ -643,10 +659,10 @@
             }
 
             // Draw X-axis ticks and labels
-            ctx.strokeStyle = '#374151';
+            ctx.strokeStyle = '#64748b';
             ctx.lineWidth = 1;
-            ctx.fillStyle = '#374151';
-            ctx.font = '10px sans-serif';
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
             ctx.textAlign = 'center';
             const numXTicks = Math.min(6, chartData.length);
             for (let i = 0; i <= numXTicks; i++) {
@@ -672,11 +688,11 @@
             }
 
             // Draw axis labels (rotated)
-            ctx.font = 'bold 14px sans-serif';
+            ctx.font = '600 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
 
             // Left Y-axis label (rotated -90 degrees)
             ctx.save();
-            ctx.fillStyle = '#667eea';
+            ctx.fillStyle = '#60a5fa';
             ctx.textAlign = 'center';
             ctx.translate(15, height / 2);
             ctx.rotate(-Math.PI / 2);
@@ -685,7 +701,7 @@
 
             // Right Y-axis label (rotated 90 degrees)
             ctx.save();
-            ctx.fillStyle = '#ef4444';
+            ctx.fillStyle = '#fbbf24';
             ctx.textAlign = 'center';
             ctx.translate(width - 15, height / 2);
             ctx.rotate(Math.PI / 2);
@@ -693,8 +709,8 @@
             ctx.restore();
 
             // Draw left metric line
-            ctx.strokeStyle = '#667eea';
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#60a5fa';
+            ctx.lineWidth = 2.5;
             ctx.beginPath();
             chartData.forEach((d, i) => {
                 const x = xScale(i);
@@ -708,7 +724,8 @@
             ctx.stroke();
 
             // Draw right metric line
-            ctx.strokeStyle = '#ef4444';
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 2.5;
             ctx.beginPath();
             chartData.forEach((d, i) => {
                 const x = xScale(i);
@@ -720,6 +737,19 @@
                 }
             });
             ctx.stroke();
+
+            // Draw vertical line for hovered data point
+            if (hoveredDataIndex >= 0 && hoveredDataIndex < chartData.length) {
+                const x = xScale(hoveredDataIndex);
+                ctx.strokeStyle = '#cbd5e1';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                ctx.moveTo(x, margin.top);
+                ctx.lineTo(x, margin.top + chartHeight);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
 
             // Store metadata for tooltip
             chartMetadata = {
@@ -808,6 +838,7 @@
         chartCanvas.addEventListener('mousemove', (e) => {
             if (!chartMetadata || chartData.length === 0) {
                 chartTooltip.style.display = 'none';
+                hoveredDataIndex = -1;
                 return;
             }
 
@@ -821,6 +852,8 @@
             if (mouseX < margin.left || mouseX > margin.left + chartWidth ||
                 mouseY < margin.top || mouseY > margin.top + chartHeight) {
                 chartTooltip.style.display = 'none';
+                hoveredDataIndex = -1;
+                drawChart();
                 return;
             }
 
@@ -830,6 +863,12 @@
 
             if (dataIndex >= 0 && dataIndex < chartData.length) {
                 const dataPoint = chartData[dataIndex];
+
+                // Update hovered index and redraw chart with vertical line
+                if (hoveredDataIndex !== dataIndex) {
+                    hoveredDataIndex = dataIndex;
+                    drawChart();
+                }
 
                 // Get metric labels
                 const leftLabel = leftAxisSelect.options[leftAxisSelect.selectedIndex].text;
@@ -846,8 +885,8 @@
                 // Format tooltip content
                 const tooltipHTML = `
                     <div style="margin-bottom: 4px;"><strong>${timestamp}</strong></div>
-                    <div style="color: #667eea;">● ${leftLabel}: ${dataPoint[leftMetric].toFixed(3)}</div>
-                    <div style="color: #ef4444;">● ${rightLabel}: ${dataPoint[rightMetric].toFixed(3)}</div>
+                    <div style="color: #60a5fa;">● ${leftLabel}: ${dataPoint[leftMetric].toFixed(3)}</div>
+                    <div style="color: #fbbf24;">● ${rightLabel}: ${dataPoint[rightMetric].toFixed(3)}</div>
                 `;
 
                 chartTooltip.innerHTML = tooltipHTML;
@@ -859,6 +898,8 @@
 
         chartCanvas.addEventListener('mouseleave', () => {
             chartTooltip.style.display = 'none';
+            hoveredDataIndex = -1;
+            drawChart();
         });
 
         // Initialize
