@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TC66C Toolkit - Web Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.connected {
+            background-color: #10b981;
+        }
+
+        .status-indicator.disconnected {
+            background-color: #ef4444;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-text {
+            display: inline-block;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        button:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button.danger {
+            background: #ef4444;
+        }
+
+        button.danger:hover:not(:disabled) {
+            background: #dc2626;
+        }
+
+        select {
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 1rem;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: #374151;
+            min-width: 120px;
+        }
+
+        .input-group input {
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 1rem;
+            flex: 1;
+        }
+
+
+        .reading-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 12px 16px;
+            border-radius: 6px;
+            color: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .reading-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .reading-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .reading-unit {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .log-container {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 3px 0;
+            border-bottom: 1px solid #374151;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-timestamp {
+            color: #9ca3af;
+            margin-right: 10px;
+        }
+
+        .log-error {
+            color: #fca5a5;
+        }
+
+        .log-success {
+            color: #86efac;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .reading-display {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TC66C Toolkit</h1>
+            <p>Web Interface for USB Power Meter</p>
+        </header>
+
+        <div class="card">
+            <h2>Device Control</h2>
+            <div class="input-group">
+                <label>WebSocket Status:</label>
+                <div style="display: flex; align-items: center; flex: 1;">
+                    <span class="status-indicator disconnected" id="wsStatus"></span>
+                    <span class="status-text" id="wsStatusText">Disconnected</span>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Serial Port:</label>
+                <select id="serialPortSelect" disabled>
+                    <option value="">Loading ports...</option>
+                </select>
+                <button id="btnRefreshPorts">Refresh</button>
+            </div>
+            <div class="input-group">
+                <label>Poll Interval:</label>
+                <select id="pollInterval">
+                    <option value="100">100 ms</option>
+                    <option value="250" selected>250 ms</option>
+                    <option value="500">500 ms</option>
+                    <option value="1000">1 s</option>
+                    <option value="2000">2 s</option>
+                </select>
+            </div>
+            <div class="controls">
+                <button id="btnStartPoll" disabled>Start Polling</button>
+                <button id="btnStopPoll" class="danger" disabled>Stop Polling</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Real-time Graph</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label>Left Y-Axis:</label>
+                    <select id="leftAxisSelect" style="flex: 1;">
+                        <option value="voltage">Voltage (V)</option>
+                        <option value="current_a" selected>Current (A)</option>
+                        <option value="current_ma">Current (mA)</option>
+                        <option value="power">Power (W)</option>
+                        <option value="temperature">Temperature (°C)</option>
+                        <option value="resistance">Resistance (Ω)</option>
+                    </select>
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label>Right Y-Axis:</label>
+                    <select id="rightAxisSelect" style="flex: 1;">
+                        <option value="voltage" selected>Voltage (V)</option>
+                        <option value="current_a">Current (A)</option>
+                        <option value="current_ma">Current (mA)</option>
+                        <option value="power">Power (W)</option>
+                        <option value="temperature">Temperature (°C)</option>
+                        <option value="resistance">Resistance (Ω)</option>
+                    </select>
+                </div>
+            </div>
+            <div style="position: relative; height: 400px;">
+                <canvas id="chartCanvas" style="width: 100%; height: 100%; border: 1px solid #e5e7eb; border-radius: 8px; background: white; cursor: crosshair;"></canvas>
+                <div id="chartTooltip" style="position: absolute; background: white; color: #374151; padding: 12px 16px; border-radius: 6px; font-size: 14px; pointer-events: none; display: none; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 2px solid #e5e7eb;"></div>
+            </div>
+
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0f0f0;">
+                <h3 style="color: #667eea; margin-bottom: 15px; font-size: 1.2rem;">Current Readings</h3>
+                <div id="readingDisplay" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <p>No data available. Start polling to see readings.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>
+                Debug Logs
+                <button id="btnToggleLogs" style="float: right; padding: 8px 16px; font-size: 0.9rem;">Show Logs</button>
+            </h2>
+            <div id="logContainer" class="log-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // WebSocket connection
+        let ws = null;
+        let isPolling = false;
+        let portsData = [];
+
+        // Chart data
+        let chartData = [];
+        const MAX_DATA_POINTS = 1000;
+        let chartMetadata = null; // Store chart metadata for tooltips
+
+        // DOM elements
+        const wsStatus = document.getElementById('wsStatus');
+        const wsStatusText = document.getElementById('wsStatusText');
+        const btnRefreshPorts = document.getElementById('btnRefreshPorts');
+        const btnStartPoll = document.getElementById('btnStartPoll');
+        const btnStopPoll = document.getElementById('btnStopPoll');
+        const btnToggleLogs = document.getElementById('btnToggleLogs');
+        const serialPortSelect = document.getElementById('serialPortSelect');
+        const pollInterval = document.getElementById('pollInterval');
+        const readingDisplay = document.getElementById('readingDisplay');
+        const logContainer = document.getElementById('logContainer');
+        const chartCanvas = document.getElementById('chartCanvas');
+        const chartTooltip = document.getElementById('chartTooltip');
+        const leftAxisSelect = document.getElementById('leftAxisSelect');
+        const rightAxisSelect = document.getElementById('rightAxisSelect');
+        const ctx = chartCanvas.getContext('2d');
+
+        // Initialize WebSocket connection
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws`;
+
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                updateConnectionStatus(true);
+                log('WebSocket connected', 'success');
+                // Load serial ports on connection
+                loadSerialPorts();
+            };
+
+            ws.onclose = () => {
+                updateConnectionStatus(false);
+                log('WebSocket disconnected', 'error');
+                setTimeout(connectWebSocket, 3000); // Reconnect after 3 seconds
+            };
+
+            ws.onerror = (error) => {
+                log('WebSocket error: ' + error, 'error');
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const response = JSON.parse(event.data);
+                    handleWebSocketMessage(response);
+                } catch (error) {
+                    log('Failed to parse WebSocket message: ' + error, 'error');
+                }
+            };
+        }
+
+        function updateConnectionStatus(connected) {
+            if (connected) {
+                wsStatus.classList.remove('disconnected');
+                wsStatus.classList.add('connected');
+                wsStatusText.textContent = 'Connected';
+                wsStatusText.style.color = '#10b981';
+            } else {
+                wsStatus.classList.remove('connected');
+                wsStatus.classList.add('disconnected');
+                wsStatusText.textContent = 'Disconnected';
+                wsStatusText.style.color = '#ef4444';
+                btnRefreshPorts.disabled = true;
+                btnStartPoll.disabled = true;
+                btnStopPoll.disabled = true;
+            }
+        }
+
+        function handleWebSocketMessage(response) {
+            if (!response.success && response.error) {
+                log(`Error: ${response.error}`, 'error');
+            }
+
+            switch (response.command) {
+                case 'list-serial':
+                    displaySerialPorts(response.data);
+                    break;
+                case 'poll':
+                    if (response.success) {
+                        isPolling = true;
+                        updatePollButtons();
+                        log(`Started polling on ${response.data.port} at ${response.data.interval}ms interval`, 'success');
+                    }
+                    break;
+                case 'poll-data':
+                    if (response.success) {
+                        displayReading(response.data);
+                    }
+                    break;
+                case 'stop':
+                    if (response.success) {
+                        isPolling = false;
+                        updatePollButtons();
+                        log('Stopped polling', 'success');
+                    }
+                    break;
+            }
+        }
+
+        function sendCommand(command, data = null) {
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                const message = { command };
+                if (data) {
+                    message.data = data;
+                }
+                ws.send(JSON.stringify(message));
+            } else {
+                log('WebSocket not connected', 'error');
+            }
+        }
+
+        function displaySerialPorts(ports) {
+            portsData = ports || [];
+            serialPortSelect.innerHTML = '';
+
+            if (portsData.length === 0) {
+                serialPortSelect.innerHTML = '<option value="">No serial ports found</option>';
+                serialPortSelect.disabled = true;
+                updatePollButtons();
+                return;
+            }
+
+            // Add placeholder option
+            const placeholderOption = document.createElement('option');
+            placeholderOption.value = '';
+            placeholderOption.textContent = 'Select a serial port...';
+            serialPortSelect.appendChild(placeholderOption);
+
+            // Add port options
+            portsData.forEach(port => {
+                const option = document.createElement('option');
+                option.value = port.name;
+
+                let label = port.name;
+                if (port.is_usb && port.vid && port.pid) {
+                    label += ` (${port.vid}:${port.pid})`;
+                }
+                if (port.serial_number) {
+                    label += ` [SN: ${port.serial_number}]`;
+                }
+
+                option.textContent = label;
+                serialPortSelect.appendChild(option);
+            });
+
+            serialPortSelect.disabled = false;
+            updatePollButtons();
+            log(`Found ${portsData.length} serial port(s)`, 'success');
+        }
+
+        function loadSerialPorts() {
+            sendCommand('list-serial');
+            log('Loading serial ports...', 'info');
+        }
+
+        function updatePollButtons() {
+            const selectedPort = serialPortSelect.value;
+            btnRefreshPorts.disabled = isPolling;
+            serialPortSelect.disabled = isPolling;
+            pollInterval.disabled = isPolling;
+            btnStartPoll.disabled = !selectedPort || isPolling;
+            btnStopPoll.disabled = !isPolling;
+        }
+
+        function displayReading(reading) {
+            // Add to chart data
+            chartData.push({
+                timestamp: Date.now(),
+                voltage: reading.voltage,
+                current_a: reading.current,
+                current_ma: reading.current * 1000,
+                power: reading.power,
+                temperature: reading.temperature,
+                resistance: reading.resistance
+            });
+
+            // Keep only last MAX_DATA_POINTS
+            if (chartData.length > MAX_DATA_POINTS) {
+                chartData.shift();
+            }
+
+            // Update chart
+            drawChart();
+
+            // Update readings display
+            const items = [
+                { label: 'Voltage', value: reading.voltage.toFixed(4), unit: 'V' },
+                { label: 'Current', value: reading.current.toFixed(5), unit: 'A' },
+                { label: 'Power', value: reading.power.toFixed(4), unit: 'W' },
+                { label: 'Resistance', value: reading.resistance.toFixed(2), unit: 'Ω' },
+                { label: 'Temperature', value: reading.temperature.toFixed(1), unit: '°C' },
+                { label: 'D+ Voltage', value: reading.dplus_voltage.toFixed(2), unit: 'V' },
+                { label: 'D- Voltage', value: reading.dminus_voltage.toFixed(2), unit: 'V' },
+                { label: 'Group 0', value: `${reading.group0_mah} mAh / ${reading.group0_mwh} mWh`, unit: '' },
+                { label: 'Group 1', value: `${reading.group1_mah} mAh / ${reading.group1_mwh} mWh`, unit: '' },
+            ];
+
+            readingDisplay.innerHTML = items.map(item => `
+                <div class="reading-item">
+                    <div class="reading-label">${item.label}</div>
+                    <div class="reading-value">${item.value}</div>
+                    <div class="reading-unit">${item.unit}</div>
+                </div>
+            `).join('');
+        }
+
+        function drawChart() {
+            // Set canvas size to match display size
+            const rect = chartCanvas.getBoundingClientRect();
+            chartCanvas.width = rect.width * window.devicePixelRatio;
+            chartCanvas.height = rect.height * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+            const width = rect.width;
+            const height = rect.height;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+
+            if (chartData.length === 0) {
+                ctx.fillStyle = '#9ca3af';
+                ctx.font = '16px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('No data available', width / 2, height / 2);
+                return;
+            }
+
+            // Chart margins
+            const margin = { top: 20, right: 60, bottom: 40, left: 60 };
+            const chartWidth = width - margin.left - margin.right;
+            const chartHeight = height - margin.top - margin.bottom;
+
+            const leftMetric = leftAxisSelect.value;
+            const rightMetric = rightAxisSelect.value;
+
+            // Get min/max for each axis (always start at 0)
+            const leftValues = chartData.map(d => d[leftMetric]);
+            const rightValues = chartData.map(d => d[rightMetric]);
+
+            const leftMin = 0;
+            const leftMax = Math.max(...leftValues);
+            const rightMin = 0;
+            const rightMax = Math.max(...rightValues);
+
+            // Add 10% padding to max values
+            const leftRange = leftMax || 1;
+            const rightRange = rightMax || 1;
+            const leftPadding = leftRange * 0.1;
+            const rightPadding = rightRange * 0.1;
+
+            const leftScale = (value) => {
+                return margin.top + chartHeight - (value / (leftRange + leftPadding)) * chartHeight;
+            };
+
+            const rightScale = (value) => {
+                return margin.top + chartHeight - (value / (rightRange + rightPadding)) * chartHeight;
+            };
+
+            const xScale = (index) => {
+                return margin.left + (index / (chartData.length - 1 || 1)) * chartWidth;
+            };
+
+            // Draw grid
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const y = margin.top + (i / 5) * chartHeight;
+                ctx.beginPath();
+                ctx.moveTo(margin.left, y);
+                ctx.lineTo(margin.left + chartWidth, y);
+                ctx.stroke();
+            }
+
+            // Draw axes
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(margin.left, margin.top);
+            ctx.lineTo(margin.left, margin.top + chartHeight);
+            ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
+            ctx.lineTo(margin.left + chartWidth, margin.top);
+            ctx.stroke();
+
+            // Draw left Y-axis labels
+            ctx.fillStyle = '#667eea';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 5; i++) {
+                const value = ((leftRange + leftPadding) * (5 - i) / 5);
+                const y = margin.top + (i / 5) * chartHeight;
+                ctx.fillText(value.toFixed(2), margin.left - 10, y + 4);
+            }
+
+            // Draw right Y-axis labels
+            ctx.fillStyle = '#ef4444';
+            ctx.textAlign = 'left';
+            for (let i = 0; i <= 5; i++) {
+                const value = ((rightRange + rightPadding) * (5 - i) / 5);
+                const y = margin.top + (i / 5) * chartHeight;
+                ctx.fillText(value.toFixed(2), margin.left + chartWidth + 10, y + 4);
+            }
+
+            // Draw X-axis ticks and labels
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 1;
+            ctx.fillStyle = '#374151';
+            ctx.font = '10px sans-serif';
+            ctx.textAlign = 'center';
+            const numXTicks = Math.min(6, chartData.length);
+            for (let i = 0; i <= numXTicks; i++) {
+                const dataIndex = Math.floor((i / numXTicks) * (chartData.length - 1));
+                const x = xScale(dataIndex);
+
+                // Draw tick
+                ctx.beginPath();
+                ctx.moveTo(x, margin.top + chartHeight);
+                ctx.lineTo(x, margin.top + chartHeight + 5);
+                ctx.stroke();
+
+                // Draw time label
+                if (chartData[dataIndex]) {
+                    const time = new Date(chartData[dataIndex].timestamp).toLocaleTimeString('en-US', {
+                        hour12: false,
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+                    ctx.fillText(time, x, margin.top + chartHeight + 18);
+                }
+            }
+
+            // Draw axis labels (rotated)
+            ctx.font = 'bold 14px sans-serif';
+
+            // Left Y-axis label (rotated -90 degrees)
+            ctx.save();
+            ctx.fillStyle = '#667eea';
+            ctx.textAlign = 'center';
+            ctx.translate(15, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText(leftAxisSelect.options[leftAxisSelect.selectedIndex].text, 0, 0);
+            ctx.restore();
+
+            // Right Y-axis label (rotated 90 degrees)
+            ctx.save();
+            ctx.fillStyle = '#ef4444';
+            ctx.textAlign = 'center';
+            ctx.translate(width - 15, height / 2);
+            ctx.rotate(Math.PI / 2);
+            ctx.fillText(rightAxisSelect.options[rightAxisSelect.selectedIndex].text, 0, 0);
+            ctx.restore();
+
+            // Draw left metric line
+            ctx.strokeStyle = '#667eea';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            chartData.forEach((d, i) => {
+                const x = xScale(i);
+                const y = leftScale(d[leftMetric]);
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.stroke();
+
+            // Draw right metric line
+            ctx.strokeStyle = '#ef4444';
+            ctx.beginPath();
+            chartData.forEach((d, i) => {
+                const x = xScale(i);
+                const y = rightScale(d[rightMetric]);
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            ctx.stroke();
+
+            // Store metadata for tooltip
+            chartMetadata = {
+                margin,
+                width,
+                height,
+                chartWidth,
+                chartHeight,
+                leftMetric,
+                rightMetric,
+                leftScale,
+                rightScale,
+                xScale,
+                leftMax: leftRange + leftPadding,
+                rightMax: rightRange + rightPadding
+            };
+        }
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type === 'error' ? 'log-error' : type === 'success' ? 'log-success' : ''}`;
+            entry.innerHTML = `<span class="log-timestamp">[${timestamp}]</span>${message}`;
+            logContainer.insertBefore(entry, logContainer.firstChild);
+
+            // Keep only last 50 entries
+            while (logContainer.children.length > 50) {
+                logContainer.removeChild(logContainer.lastChild);
+            }
+        }
+
+        // Event listeners
+        serialPortSelect.addEventListener('change', () => {
+            updatePollButtons();
+        });
+
+        btnRefreshPorts.addEventListener('click', () => {
+            loadSerialPorts();
+        });
+
+        btnStartPoll.addEventListener('click', () => {
+            const selectedPort = serialPortSelect.value;
+            if (selectedPort) {
+                // Clear chart data when starting new poll
+                chartData = [];
+                drawChart();
+                const interval = parseInt(pollInterval.value) || 500;
+                sendCommand('poll', { port: selectedPort, interval });
+            }
+        });
+
+        btnStopPoll.addEventListener('click', () => {
+            sendCommand('stop');
+        });
+
+        btnToggleLogs.addEventListener('click', () => {
+            if (logContainer.style.display === 'none') {
+                logContainer.style.display = 'block';
+                btnToggleLogs.textContent = 'Hide Logs';
+            } else {
+                logContainer.style.display = 'none';
+                btnToggleLogs.textContent = 'Show Logs';
+            }
+        });
+
+        leftAxisSelect.addEventListener('change', () => {
+            if (chartData.length > 0) {
+                drawChart();
+            }
+        });
+
+        rightAxisSelect.addEventListener('change', () => {
+            if (chartData.length > 0) {
+                drawChart();
+            }
+        });
+
+        // Redraw chart on window resize
+        window.addEventListener('resize', () => {
+            if (chartData.length > 0) {
+                drawChart();
+            }
+        });
+
+        // Tooltip on mouse move
+        chartCanvas.addEventListener('mousemove', (e) => {
+            if (!chartMetadata || chartData.length === 0) {
+                chartTooltip.style.display = 'none';
+                return;
+            }
+
+            const rect = chartCanvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            const { margin, chartWidth, chartHeight, leftMetric, rightMetric } = chartMetadata;
+
+            // Check if mouse is within chart area
+            if (mouseX < margin.left || mouseX > margin.left + chartWidth ||
+                mouseY < margin.top || mouseY > margin.top + chartHeight) {
+                chartTooltip.style.display = 'none';
+                return;
+            }
+
+            // Find nearest data point
+            const relativeX = mouseX - margin.left;
+            const dataIndex = Math.round((relativeX / chartWidth) * (chartData.length - 1));
+
+            if (dataIndex >= 0 && dataIndex < chartData.length) {
+                const dataPoint = chartData[dataIndex];
+
+                // Get metric labels
+                const leftLabel = leftAxisSelect.options[leftAxisSelect.selectedIndex].text;
+                const rightLabel = rightAxisSelect.options[rightAxisSelect.selectedIndex].text;
+
+                // Format timestamp
+                const timestamp = new Date(dataPoint.timestamp).toLocaleTimeString('en-US', {
+                    hour12: false,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+
+                // Format tooltip content
+                const tooltipHTML = `
+                    <div style="margin-bottom: 4px;"><strong>${timestamp}</strong></div>
+                    <div style="color: #667eea;">● ${leftLabel}: ${dataPoint[leftMetric].toFixed(3)}</div>
+                    <div style="color: #ef4444;">● ${rightLabel}: ${dataPoint[rightMetric].toFixed(3)}</div>
+                `;
+
+                chartTooltip.innerHTML = tooltipHTML;
+                chartTooltip.style.display = 'block';
+                chartTooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+                chartTooltip.style.top = (e.clientY - rect.top + 15) + 'px';
+            }
+        });
+
+        chartCanvas.addEventListener('mouseleave', () => {
+            chartTooltip.style.display = 'none';
+        });
+
+        // Initialize
+        connectWebSocket();
+        drawChart();
+    </script>
+</body>
+</html>
