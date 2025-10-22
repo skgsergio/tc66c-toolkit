@@ -37,12 +37,12 @@ func main() {
 
 // connectDevice connects to the TC66C device on the specified port
 func connectDevice(port string) *tc66c.TC66C {
-	fmt.Printf("Connecting to TC66C on %s...\n", port)
+	fmt.Fprintf(os.Stderr, "Connecting to TC66C on %s...\n", port)
 	device, err := tc66c.NewTC66C(port)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
-	fmt.Printf("Connected successfully! Device mode: %s\n", device.Mode)
+	fmt.Fprintf(os.Stderr, "Connected successfully! Device mode: %s\n", device.Mode)
 	return device
 }

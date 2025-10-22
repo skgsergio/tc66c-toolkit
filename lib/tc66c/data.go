@@ -2,6 +2,7 @@ package tc66c
 
 import (
 	"encoding/binary"
+	"encoding/json"
 	"fmt"
 	"strings"
 )
@@ -9,24 +10,24 @@ import (
 // Reading represents a single reading from the TC66C device
 type Reading struct {
 	// pac1 block
-	Product         string  // Product name (e.g., "TC66")
-	Version         string  // Firmware version (e.g., "1.14")
-	SerialNumber    uint32  // Module serial number
-	NumRuns         uint32  // Number of runs
-	Voltage         float64 // Voltage in V
-	Current         float64 // Current in A
-	Power           float64 // Power in W
+	Product         string  `json:"product"`          // Product name (e.g., "TC66")
+	Version         string  `json:"version"`          // Firmware version (e.g., "1.14")
+	SerialNumber    uint32  `json:"serial_number"`    // Module serial number
+	NumRuns         uint32  `json:"num_runs"`         // Number of runs
+	Voltage         float64 `json:"voltage"`          // Voltage in V
+	Current         float64 `json:"current"`          // Current in A
+	Power           float64 `json:"power"`            // Power in W
 
 	// pac2 block
-	Resistance      float64 // Resistance in Ω
-	Group0MAh       uint32  // Group 0 mAh
-	Group0MWh       uint32  // Group 0 mWh
-	Group1MAh       uint32  // Group 1 mAh
-	Group1MWh       uint32  // Group 1 mWh
-	TemperatureSign uint32  // Temperature sign (0 = positive, 1 = negative)
-	Temperature     float64 // Temperature in °C
-	DPlusVoltage    float64 // D+ line voltage in V
-	DMinusVoltage   float64 // D- line voltage in V
+	Resistance      float64 `json:"resistance"`       // Resistance in Ω
+	Group0MAh       uint32  `json:"group0_mah"`       // Group 0 mAh
+	Group0MWh       uint32  `json:"group0_mwh"`       // Group 0 mWh
+	Group1MAh       uint32  `json:"group1_mah"`       // Group 1 mAh
+	Group1MWh       uint32  `json:"group1_mwh"`       // Group 1 mWh
+	TemperatureSign uint32  `json:"temperature_sign"` // Temperature sign (0 = positive, 1 = negative)
+	Temperature     float64 `json:"temperature"`      // Temperature in °C
+	DPlusVoltage    float64 `json:"dplus_voltage"`    // D+ line voltage in V
+	DMinusVoltage   float64 `json:"dminus_voltage"`   // D- line voltage in V
 }
 
 // ParseReading parses a decrypted 192-byte packet into a Reading struct
@@ -170,10 +171,19 @@ func (r *Reading) ShortString() string {
 	)
 }
 
+// JSON returns a JSON representation of the reading
+func (r *Reading) JSON() (string, error) {
+	data, err := json.Marshal(r)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+
 // RecordingEntry represents a single recording entry from the device
 type RecordingEntry struct {
-	Voltage float64 // Voltage in V
-	Current float64 // Current in A
+	Voltage float64 `json:"voltage"` // Voltage in V
+	Current float64 `json:"current"` // Current in A
 }
 
 // String returns a formatted string representation of a recording entry
