@@ -155,7 +155,7 @@
         .input-group label {
             font-weight: 500;
             color: #cbd5e1;
-            min-width: 120px;
+            min-width: 90px;
             text-align: right;
         }
 
@@ -291,7 +291,7 @@
 
         <div class="card">
             <h2>Real-time Graph</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px;">
                 <div class="input-group" style="margin-bottom: 0;">
                     <label>Left Y-Axis:</label>
                     <select id="leftAxisSelect" style="flex: 1;">
@@ -313,6 +313,13 @@
                         <option value="temperature">Temperature (°C)</option>
                         <option value="resistance">Resistance (Ω)</option>
                     </select>
+                </div>
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label>Data Points:</label>
+                    <input type="number" id="maxDataPointsInput" value="1500" min="10" max="10000" step="10" style="flex: 0.25; max-width: 120px;">
+                    <span style="color: #cbd5e1; font-weight: 500; margin-left: 10px; display: inline-flex; align-items: center; white-space: nowrap;">
+                        (Window: <span id="timeRangeDisplay" style="margin-left: 4px;">--</span>)
+                    </span>
                 </div>
             </div>
             <div style="position: relative; height: 400px;">
@@ -348,7 +355,7 @@
 
         // Chart data
         let chartData = [];
-        const MAX_DATA_POINTS = 1000;
+        let MAX_DATA_POINTS = 1500;
         let chartMetadata = null; // Store chart metadata for tooltips
         let hoveredDataIndex = -1; // Track hovered data point for vertical line
 
@@ -367,6 +374,8 @@
         const chartTooltip = document.getElementById('chartTooltip');
         const leftAxisSelect = document.getElementById('leftAxisSelect');
         const rightAxisSelect = document.getElementById('rightAxisSelect');
+        const maxDataPointsInput = document.getElementById('maxDataPointsInput');
+        const timeRangeDisplay = document.getElementById('timeRangeDisplay');
         const ctx = chartCanvas.getContext('2d');
 
         // Initialize WebSocket connection
@@ -418,6 +427,25 @@
                 btnStartPoll.disabled = true;
                 btnStopPoll.disabled = true;
             }
+        }
+
+        function updateTimeRange() {
+            const maxPoints = parseInt(maxDataPointsInput.value) || 1500;
+            const interval = parseInt(pollInterval.value);
+            const totalTimeMs = maxPoints * interval;
+            
+            let timeRange;
+            if (totalTimeMs < 1000) {
+                timeRange = `${totalTimeMs} ms`;
+            } else if (totalTimeMs < 60000) {
+                timeRange = `${(totalTimeMs / 1000).toFixed(1)} s`;
+            } else if (totalTimeMs < 3600000) {
+                timeRange = `${(totalTimeMs / 60000).toFixed(1)} min`;
+            } else {
+                timeRange = `${(totalTimeMs / 3600000).toFixed(1)} h`;
+            }
+            
+            timeRangeDisplay.textContent = timeRange;
         }
 
         function handleWebSocketMessage(response) {
@@ -527,6 +555,9 @@
                 temperature: reading.temperature,
                 resistance: reading.resistance
             });
+
+            // Update MAX_DATA_POINTS from input
+            MAX_DATA_POINTS = parseInt(maxDataPointsInput.value) || 1500;
 
             // Keep only last MAX_DATA_POINTS
             if (chartData.length > MAX_DATA_POINTS) {
@@ -827,6 +858,32 @@
             }
         });
 
+        maxDataPointsInput.addEventListener('input', () => {
+            // Validate input value
+            let value = parseInt(maxDataPointsInput.value);
+            if (isNaN(value) || value < 10) {
+                value = 10;
+                maxDataPointsInput.value = value;
+            } else if (value > 10000) {
+                value = 10000;
+                maxDataPointsInput.value = value;
+            }
+            
+            // Update MAX_DATA_POINTS and trim data if necessary
+            MAX_DATA_POINTS = value;
+            if (chartData.length > MAX_DATA_POINTS) {
+                chartData = chartData.slice(-MAX_DATA_POINTS);
+            }
+            updateTimeRange();
+            if (chartData.length > 0) {
+                drawChart();
+            }
+        });
+
+        pollInterval.addEventListener('change', () => {
+            updateTimeRange();
+        });
+
         // Redraw chart on window resize
         window.addEventListener('resize', () => {
             if (chartData.length > 0) {
@@ -904,6 +961,7 @@
 
         // Initialize
         connectWebSocket();
+        updateTimeRange();
         drawChart();
     </script>
 </body>

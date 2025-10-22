@@ -19,7 +19,7 @@ A command-line toolkit for interacting with TC66/TC66C USB power meters. Read me
 Requires Go 1.25 or later:
 
 ```bash
-git clone https://github.com/yourusername/tc66c-toolkit
+git clone https://github.com/skgsergio/tc66c-toolkit
 cd tc66c-toolkit
 go build -o tc66c-toolkit ./cmd/toolkit
 ```
