@@ -2,6 +2,12 @@
 
 A command-line toolkit for interacting with TC66/TC66C USB power meters. Read measurements, poll data continuously, retrieve recordings, and update firmware.
 
+## Disclaimer
+
+**This project has been 99.99% vivecoded and was not reviewed at all.** It can and will contain bugs, and the experience and UX might not be the best one. Use at your own risk.
+
+The firmware update feature has been tested by myself on two devices, updating from versions 1.09 and 1.12 to 1.18, and also flashing 1.18 over a corrupted device (yes, the firmware update code didn't work on the first try) returning it to life, so it should be pretty safe to use.
+
 ## Features
 
 - **Get readings**: Single snapshot of voltage, current, power, and more
