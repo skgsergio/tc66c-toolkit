@@ -6,6 +6,7 @@ A command-line toolkit for interacting with TC66/TC66C USB power meters. Read me
 
 - **Get readings**: Single snapshot of voltage, current, power, and more
 - **Continuous polling**: Monitor readings in real-time at configurable intervals
+- **Web UI**: Browser-based interface with real-time graphing and monitoring
 - **Recording retrieval**: Download stored measurement data from the device
 - **Firmware updates**: Flash new firmware to your device (bootloader mode)
 - **JSON output**: Export data in JSON format for scripting and analysis
@@ -53,6 +54,26 @@ tc66c-toolkit poll -i 1s
 tc66c-toolkit poll --json
 ```
 
+#### Web UI
+
+Start a web server with a browser-based interface for real-time monitoring:
+
+```bash
+# Start web server (default: localhost:8080)
+tc66c-toolkit web
+
+# Custom address and port
+tc66c-toolkit web -a 0.0.0.0 -w 8080
+```
+
+Then open your browser to `http://localhost:8080`. The Web UI provides:
+
+- **Serial port detection**: Automatically lists available serial ports
+- **Real-time graphing**: Dual Y-axis charts with configurable metrics
+- **Live readings**: Display of voltage, current, power, temperature, and more
+- **Configurable polling**: Adjustable intervals from 100ms to 2s
+- **WebSocket updates**: Efficient real-time data streaming
+
 #### Retrieve Recordings
 
 ```bash
@@ -86,6 +107,10 @@ tc66c-toolkit update -f firmware.bin
 
 **get**:
 - `-j, --json`: Output in JSON format
+
+**web**:
+- `-a, --address`: Address to bind the web server (default: `localhost`)
+- `-w, --web-port`: Port for the web server (default: `8080`)
 
 **update**:
 - `-f, --file`: Firmware file (required)
