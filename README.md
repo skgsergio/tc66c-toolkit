@@ -219,4 +219,6 @@ All measurement data is AES-ECB encrypted with a static key.
 
 ## License
 
+Licensed under **The "Better Ask The LLM" License (BATL)** - Software offered "as is, maybe" with no warranties or guarantees. Use at your own risk, and when in doubt, better ask the LLM!
+
 See [LICENSE.md](LICENSE.md) for details.
