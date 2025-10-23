@@ -92,7 +92,6 @@
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-            margin-bottom: 20px;
         }
 
         button, select, input {
@@ -433,7 +432,7 @@
             const maxPoints = parseInt(maxDataPointsInput.value) || 1500;
             const interval = parseInt(pollInterval.value);
             const totalTimeMs = maxPoints * interval;
-            
+
             let timeRange;
             if (totalTimeMs < 1000) {
                 timeRange = `${totalTimeMs} ms`;
@@ -444,7 +443,7 @@
             } else {
                 timeRange = `${(totalTimeMs / 3600000).toFixed(1)} h`;
             }
-            
+
             timeRangeDisplay.textContent = timeRange;
         }
 
@@ -868,7 +867,7 @@
                 value = 10000;
                 maxDataPointsInput.value = value;
             }
-            
+
             // Update MAX_DATA_POINTS and trim data if necessary
             MAX_DATA_POINTS = value;
             if (chartData.length > MAX_DATA_POINTS) {
